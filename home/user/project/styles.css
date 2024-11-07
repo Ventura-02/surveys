@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#add-row {
+    font-size: 10px;
+    padding: 5px 8px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-left: 100px;
+}
+
+#copy-button {
+    font-size: 15px;
+    padding: 5px 8px;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-left: 100px;
+}
+
+#open-xml-page {
+    font-size: 10px;
+    padding: 5px 8px;
+    display: inline-block;
+    margin-left: 85px;
+}
+
+#export {
+    font-size: 20px;
+    padding: 5px 8px;
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+pre {
+    width: 90%;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+
+    th,
+    td {
+        padding: 5px;
+    }
+
+    button {
+        width: 100%;
+    }
+}

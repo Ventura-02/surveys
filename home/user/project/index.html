@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportar Datos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Ingresar Datos</h1>
+
+    <button id="open-xml-page">XML a Excel</button>
+
+
+    </script>
+
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>uid/md</th>
+                <th>tvd</th>
+                <th>incl</th>
+                <th>azi</th>
+                <th>dispNs</th>
+                <th>dispEw</th>
+                <th>vertSect</th>
+                <th>dls</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+            </tr>
+        </tbody>
+    </table>
+    <button id="add-row" onclick="addRow()">+</button>
+    <button id="export" onclick="exportData()">Exportar</button>
+    <button id="copy-button" onclick="copyToClipboard()" style="display: none;">Copiar</button>
+    <pre id="output"></pre>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('open-xml-page').addEventListener('click', function () {
+            window.location.href = 'xml-to-excel.html';
+        });
+    </script>
+</body>
+
+</html>

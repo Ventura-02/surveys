@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pegar XML y Exportar a Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <h1>Pegar XML</h1>
+    <textarea id="xml-input" rows="20" cols="50"></textarea><br>
+    <button id="process-xml">Procesar y Guardar en Excel</button>
+    <button id="back-to-index">Regresar al Inicio</button>
+
+    <script>
+        document.getElementById('process-xml').addEventListener('click', function () {
+            const xmlText = document.getElementById('xml-input').value;
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+            const trajectoryStations = xmlDoc.getElementsByTagName('trajectoryStation');
+
+            const data = [['UID', 'MD', 'TVD', 'Incl', 'Azi', 'DispNs', 'DispEw', 'VertSect', 'DLS']];
+            for (let station of trajectoryStations) {
+                const uid = station.getAttribute('uid');
+                const md = station.getElementsByTagName('md')[0].textContent;
+                const tvd = station.getElementsByTagName('tvd')[0].textContent;
+                const incl = station.getElementsByTagName('incl')[0].textContent;
+                const azi = station.getElementsByTagName('azi')[0].textContent;
+                const dispNs = station.getElementsByTagName('dispNs')[0].textContent;
+                const dispEw = station.getElementsByTagName('dispEw')[0].textContent;
+                const vertSect = station.getElementsByTagName('vertSect')[0].textContent;
+                const dls = station.getElementsByTagName('dls')[0].textContent;
+                data.push([uid, md, tvd, incl, azi, dispNs, dispEw, vertSect, dls]);
+            }
+
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+            XLSX.writeFile(workbook, 'datos.xlsx');
+        });
+
+        document.getElementById('back-to-index').addEventListener('click', function () {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>
