@@ -84,3 +84,9 @@ pre {
         width: 100%;
     }
 }
+
+#handsontable-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 500px;
+}

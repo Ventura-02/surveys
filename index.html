@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exportar Datos</title>
+    <title>Ingresar Datos</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Incluye el CSS de Handsontable -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
 </head>
 
 <body>
@@ -13,40 +15,16 @@
 
     <button id="open-xml-page">XML a Excel</button>
 
+    <!-- Contenedor para Handsontable -->
+    <div id="handsontable-container"></div>
 
-    </script>
-
-    <table id="data-table">
-        <thead>
-            <tr>
-                <th>uid/md</th>
-                <th>tvd</th>
-                <th>incl</th>
-                <th>azi</th>
-                <th>dispNs</th>
-                <th>dispEw</th>
-                <th>vertSect</th>
-                <th>dls</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-            </tr>
-        </tbody>
-    </table>
-    <button id="add-row" onclick="addRow()">+</button>
+    <!-- Elimina el botón de añadir fila -->
     <button id="export" onclick="exportData()">Exportar</button>
     <button id="copy-button" onclick="copyToClipboard()" style="display: none;">Copiar</button>
     <pre id="output"></pre>
 
+    <!-- Incluye el script de Handsontable -->
+    <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
     <script src="script.js"></script>
     <script>
         document.getElementById('open-xml-page').addEventListener('click', function () {

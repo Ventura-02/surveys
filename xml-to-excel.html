@@ -1,46 +1,86 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Pegar XML y Exportar a Excel</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Table Exporter</title>
 </head>
 
 <body>
-    <h1>Pegar XML</h1>
-    <textarea id="xml-input" rows="20" cols="50"></textarea><br>
-    <button id="process-xml">Procesar y Guardar en Excel</button>
-    <button id="back-to-index">Regresar al Inicio</button>
+    <button id="home">Regresar</button>
+    <h1>Text to Table Exporter</h1>
+    <textarea id="textInput" rows="15" cols="80" placeholder="Paste your text here"></textarea><br>
+    <button onclick="generateTable()">Generate Table</button>
+    <button onclick="exportToExcel()">Export to Excel</button>
+    <table id="textTable" border="1">
+        <thead>
+            <tr>
+                <th>md</th>
+                <th>tvd</th>
+                <th>incl</th>
+                <th>azi</th>
+                <th>dispNs</th>
+                <th>dispEw</th>
+                <th>vertSect</th>
+                <th>dls</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be inserted here -->
+        </tbody>
+    </table>
 
     <script>
-        document.getElementById('process-xml').addEventListener('click', function () {
-            const xmlText = document.getElementById('xml-input').value;
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-            const trajectoryStations = xmlDoc.getElementsByTagName('trajectoryStation');
+        function generateTable() {
+            const textInput = document.getElementById("textInput").value;
+            const tbody = document.getElementById("textTable").getElementsByTagName("tbody")[0];
+            tbody.innerHTML = ""; // Clear previous rows
 
-            const data = [['UID', 'MD', 'TVD', 'Incl', 'Azi', 'DispNs', 'DispEw', 'VertSect', 'DLS']];
-            for (let station of trajectoryStations) {
-                const uid = station.getAttribute('uid');
-                const md = station.getElementsByTagName('md')[0].textContent;
-                const tvd = station.getElementsByTagName('tvd')[0].textContent;
-                const incl = station.getElementsByTagName('incl')[0].textContent;
-                const azi = station.getElementsByTagName('azi')[0].textContent;
-                const dispNs = station.getElementsByTagName('dispNs')[0].textContent;
-                const dispEw = station.getElementsByTagName('dispEw')[0].textContent;
-                const vertSect = station.getElementsByTagName('vertSect')[0].textContent;
-                const dls = station.getElementsByTagName('dls')[0].textContent;
-                data.push([uid, md, tvd, incl, azi, dispNs, dispEw, vertSect, dls]);
+            // Regex pattern to match each block of values in the text, handling possible whitespace and newline characters
+            const pattern = /<md uom="m">\s*([\d.-]+)\s*<\/md>[\s\S]*?<tvd uom="m">\s*([\d.-]+)\s*<\/tvd>[\s\S]*?<incl uom="dega">\s*([\d.-]+)\s*<\/incl>[\s\S]*?<azi uom="dega">\s*([\d.-]+)\s*<\/azi>[\s\S]*?<dispNs uom="m">\s*([\d.-]+)\s*<\/dispNs>[\s\S]*?<dispEw uom="m">\s*([\d.-]+)\s*<\/dispEw>[\s\S]*?<vertSect uom="m">\s*([\d.-]+)\s*<\/vertSect>[\s\S]*?<dls uom="dega\/30m">\s*([\d.-]+)\s*<\/dls>/g;
+
+            // Find all matches in the text input
+            let match;
+            while ((match = pattern.exec(textInput)) !== null) {
+                const [_, md, tvd, incl, azi, dispNs, dispEw, vertSect, dls] = match;
+
+                // Insert a new row with the matched data
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = md;
+                row.insertCell(1).textContent = tvd;
+                row.insertCell(2).textContent = incl;
+                row.insertCell(3).textContent = azi;
+                row.insertCell(4).textContent = dispNs;
+                row.insertCell(5).textContent = dispEw;
+                row.insertCell(6).textContent = vertSect;
+                row.insertCell(7).textContent = dls;
             }
+        }
 
-            const worksheet = XLSX.utils.aoa_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
-            XLSX.writeFile(workbook, 'datos.xlsx');
-        });
+        function exportToExcel() {
+            const table = document.getElementById("textTable");
+            const rows = Array.from(table.querySelectorAll("tr")).map(tr => {
+                return Array.from(tr.querySelectorAll("th, td")).map(td => td.textContent);
+            });
 
-        document.getElementById('back-to-index').addEventListener('click', function () {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            rows.forEach(rowArray => {
+                let row = rowArray.join(",");
+                csvContent += row + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "trajectory_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+    <script>
+        document.getElementById('home').addEventListener('click', function () {
             window.location.href = 'index.html';
         });
     </script>
