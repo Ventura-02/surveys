@@ -5,6 +5,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text to Table Exporter</title>
+    <style>
+        body {
+            background: #2A3132;
+            color: #F5F5F5;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #90AFC5;
+            text-align: center;
+            margin-top: 30px;
+            letter-spacing: 2px;
+        }
+
+        #home {
+            background: #763626;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 20px 0 0 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        #home:hover {
+            background: #336B87;
+        }
+
+        #textInput {
+            display: block;
+            margin: 30px auto 10px auto;
+            width: 90%;
+            max-width: 900px;
+            background: #90AFC5;
+            color: #2A3132;
+            border: 2px solid #336B87;
+            border-radius: 8px;
+            font-size: 16px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button[onclick] {
+            background: #336B87;
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            margin: 10px 5px 30px 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        button[onclick]:hover {
+            background: #763626;
+        }
+
+        table {
+            margin: 0 auto 40px auto;
+            border-collapse: collapse;
+            width: 95%;
+            max-width: 1000px;
+            background: #90AFC5;
+            color: #2A3132;
+            box-shadow: 0 4px 16px rgba(42, 49, 50, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #336B87;
+            color: #fff;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        tr:nth-child(even) td {
+            background: #b3c8d6;
+        }
+
+        tr:nth-child(odd) td {
+            background: #e6ecf2;
+        }
+
+        @media (max-width: 700px) {
+            #textInput,
+            table {
+                width: 98%;
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 7px 4px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -37,15 +145,27 @@
             const tbody = document.getElementById("textTable").getElementsByTagName("tbody")[0];
             tbody.innerHTML = ""; // Clear previous rows
 
-            // Regex pattern to match each block of values in the text, handling possible whitespace and newline characters
-            const pattern = /<md uom="m">\s*([\d.-]+)\s*<\/md>[\s\S]*?<tvd uom="m">\s*([\d.-]+)\s*<\/tvd>[\s\S]*?<incl uom="dega">\s*([\d.-]+)\s*<\/incl>[\s\S]*?<azi uom="dega">\s*([\d.-]+)\s*<\/azi>[\s\S]*?<dispNs uom="m">\s*([\d.-]+)\s*<\/dispNs>[\s\S]*?<dispEw uom="m">\s*([\d.-]+)\s*<\/dispEw>[\s\S]*?<vertSect uom="m">\s*([\d.-]+)\s*<\/vertSect>[\s\S]*?<dls uom="dega\/30m">\s*([\d.-]+)\s*<\/dls>/g;
+            // Encuentra cada bloque de trajectoryStation
+            const stationPattern = /<trajectoryStation[\s\S]*?<\/trajectoryStation>/g;
+            const stations = textInput.match(stationPattern) || [];
 
-            // Find all matches in the text input
-            let match;
-            while ((match = pattern.exec(textInput)) !== null) {
-                const [_, md, tvd, incl, azi, dispNs, dispEw, vertSect, dls] = match;
+            stations.forEach(station => {
+                // Busca cada campo individualmente, si no existe, queda vacío
+                function getValue(tag, uom = "") {
+                    const regex = new RegExp(`<${tag}(?:\\s+uom="${uom}")?>\\s*([\\d.-]+)\\s*<\\/${tag}>`);
+                    const match = station.match(regex);
+                    return match ? match[1] : "";
+                }
 
-                // Insert a new row with the matched data
+                const md = getValue("md", "m");
+                const tvd = getValue("tvd", "m");
+                const incl = getValue("incl", "dega");
+                const azi = getValue("azi", "dega");
+                const dispNs = getValue("dispNs", "m");
+                const dispEw = getValue("dispEw", "m");
+                const vertSect = getValue("vertSect", "m");
+                const dls = getValue("dls", "dega/30m");
+
                 const row = tbody.insertRow();
                 row.insertCell(0).textContent = md;
                 row.insertCell(1).textContent = tvd;
@@ -55,7 +175,7 @@
                 row.insertCell(5).textContent = dispEw;
                 row.insertCell(6).textContent = vertSect;
                 row.insertCell(7).textContent = dls;
-            }
+            });
         }
 
         function exportToExcel() {
